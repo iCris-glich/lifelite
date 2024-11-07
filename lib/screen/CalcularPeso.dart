@@ -17,6 +17,14 @@ class Estado extends State<CalcularPeso> {
   double? _resultadoImc;
   String? _mensajeImc;
 
+  void limpiarTexto() {
+    setState(() {
+      _pesoKilos.clear();
+      _pesoLibras.clear();
+      _altura.clear();
+    });
+  }
+
   void calculoDeLibrasAKilos() {
     double pesoLibras = double.tryParse(_pesoLibras.text) ?? 0;
     double pesoKilos = pesoLibras * 0.45359237;
@@ -58,6 +66,8 @@ class Estado extends State<CalcularPeso> {
 
   @override
   Widget build(BuildContext context) {
+    double anchoPantalla = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -80,7 +90,6 @@ class Estado extends State<CalcularPeso> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 50),
               Card(
                 color: Colors.blue.shade900.withOpacity(0.8),
                 child: const Padding(
@@ -94,7 +103,7 @@ class Estado extends State<CalcularPeso> {
                   ),
                 ),
               ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 15),
               CustomTextField(
                 controller: _pesoLibras,
                 keyboardType: TextInputType.number,
@@ -123,11 +132,43 @@ class Estado extends State<CalcularPeso> {
                 hintText: 'Ingresa tu altura en metros',
               ),
               const SizedBox(height: 15),
-              CustomButton(
-                  text: 'Calcula tu IMC',
-                  onPressed: () {
-                    imc();
-                  }),
+              anchoPantalla > 600
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CustomButton(
+                          text: 'Reiniciar calculadora',
+                          onPressed: () {
+                            limpiarTexto();
+                          },
+                        ),
+                        CustomButton(
+                          text: 'Calcula tu IMC',
+                          onPressed: () {
+                            imc();
+                          },
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        CustomButton(
+                          text: 'Reiniciar calculadora',
+                          onPressed: () {
+                            limpiarTexto();
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        CustomButton(
+                          text: 'Calcula tu IMC',
+                          onPressed: () {
+                            imc();
+                          },
+                        ),
+                      ],
+                    ),
               const SizedBox(height: 15),
               if (_resultadoImc != null && _mensajeImc != null)
                 Column(
